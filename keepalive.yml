@@ -1,0 +1,12 @@
+# Envoie une requête à Supabase deux fois par semaine pour éviter la mise en pause (plan gratuit).
+# Ajoute dans GitHub > Settings > Secrets and variables > Actions : SUPABASE_URL et SUPABASE_ANON_KEY
+name: supabase-keepalive
+on:
+  schedule:
+    - cron: "0 6 * * 1,4"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}"

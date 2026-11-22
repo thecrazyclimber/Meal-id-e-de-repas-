@@ -1,0 +1,61 @@
+/* ===== 1. Couleurs & tailles : modifie ici pour changer tout le site ===== */
+:root {
+  --fond: #f3f6f4;
+  --carte: #ffffff;
+  --texte: #1d2b28;
+  --texte-doux: #5d6d69;
+  --accent: #2c6e5b;
+  --accent-clair: #dcebe5;
+  --danger: #b4443a;
+  --bordure: #d3ddd9;
+  --rayon: 10px;
+  --espace: 1rem;
+  --police: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+/* ===== 2. Base ===== */
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 var(--police); background: var(--fond); color: var(--texte); }
+main { max-width: 860px; margin: 0 auto; padding: var(--espace); }
+h1 { font-size: 1.6rem; margin: 0; }
+h2 { font-size: 1.2rem; margin: 0 0 .75rem; }
+ul { margin: 0; padding: 0; list-style: none; }
+.doux { color: var(--texte-doux); font-size: .9rem; }
+/* ===== 3. En-tête & navigation ===== */
+.entete { background: var(--carte); border-bottom: 1px solid var(--bordure); }
+.entete-contenu { max-width: 860px; margin: 0 auto; padding: var(--espace); display: flex; flex-wrap: wrap; gap: var(--espace); align-items: center; justify-content: space-between; }
+nav { display: flex; gap: .25rem; }
+nav a { padding: .4rem .8rem; border-radius: var(--rayon); color: var(--texte); text-decoration: none; }
+nav a.actif { background: var(--accent-clair); color: var(--accent); font-weight: 600; }
+/* ===== 4. Pages ===== */
+.page { display: none; }
+.page.visible { display: block; }
+.bloc { background: var(--carte); border: 1px solid var(--bordure); border-radius: var(--rayon); padding: var(--espace); margin-bottom: var(--espace); }
+/* ===== 5. Formulaires & boutons ===== */
+.formulaire { display: flex; flex-wrap: wrap; gap: var(--espace); align-items: end; }
+label { display: flex; flex-direction: column; gap: .25rem; font-size: .9rem; color: var(--texte-doux); }
+input, select, textarea { font: inherit; padding: .5rem .6rem; border: 1px solid var(--bordure); border-radius: 8px; background: #fff; color: var(--texte); }
+textarea { width: 100%; }
+button { font: inherit; cursor: pointer; padding: .5rem 1rem; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; }
+button.secondaire { background: transparent; color: var(--accent); }
+button.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+button:disabled { opacity: .5; cursor: default; }
+:focus-visible { outline: 3px solid #7fb8a6; outline-offset: 2px; }
+/* ===== 6. Listes de repas / courses / cartes ===== */
+.liste li { display: flex; justify-content: space-between; align-items: center; gap: var(--espace); padding: .6rem 0; border-bottom: 1px solid var(--bordure); }
+.liste li:last-child { border-bottom: 0; }
+.courses li { justify-content: flex-start; padding: .3rem 0; }
+.courses input:checked + span { text-decoration: line-through; color: var(--texte-doux); }
+.grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--espace); }
+.carte { background: var(--carte); border: 1px solid var(--bordure); border-radius: var(--rayon); padding: var(--espace); display: flex; flex-direction: column; gap: .5rem; }
+.carte button { margin-top: auto; }
+.etiquettes { display: flex; flex-wrap: wrap; gap: .3rem; }
+.etiquette { background: var(--accent-clair); color: var(--accent); border-radius: 99px; padding: 0 .6rem; font-size: .8rem; }
+.vide { color: var(--texte-doux); padding: var(--espace) 0; }
+@media (max-width: 520px) { .formulaire > * { flex: 1 1 100%; } }
+/* ===== 7. Ajouts version Supabase ===== */
+[hidden] { display: none !important; }
+.entete-droite { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.entete-droite button { padding: .3rem .8rem; }
+.message { min-height: 1.4rem; font-size: .9rem; color: var(--danger); }
+.message.ok { color: var(--accent); }
+.petit { max-width: 420px; }

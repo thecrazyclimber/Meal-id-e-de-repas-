@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planificateur de repas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="entete"><div class="entete-contenu">
+    <h1>Planificateur de repas</h1>
+    <div class="entete-droite" id="zone-nav" hidden>
+      <nav>
+        <a href="#planning" data-lien="planning">Planning</a>
+        <a href="#collection" data-lien="collection">Ma collection</a>
+        <a href="#suggestions" data-lien="suggestions">Suggestions</a>
+        <a href="#compte" data-lien="compte">Compte</a>
+        <a href="#admin" data-lien="admin" id="lien-admin" hidden>Admin</a>
+      </nav>
+      <span class="doux" id="nom-utilisateur"></span>
+      <button class="secondaire" id="btn-deconnexion">Déconnexion</button>
+    </div>
+  </div></header>
+
+  <main>
+    <!-- PAGE 1 : générer un planning + liste de courses -->
+    <section class="page" id="page-planning">
+      <div class="bloc">
+        <h2>Générer un planning</h2>
+        <div class="formulaire">
+          <label>Nombre de repas <input type="number" id="nb-repas" min="1" value="5"></label>
+          <label>Saison <select id="plan-saison">
+            <option value="ete">Été</option><option value="hiver">Hiver</option><option value="toutes">Toutes</option></select></label>
+          <label>Régime <select id="plan-regime"></select></label>
+          <button id="btn-generer">Générer</button>
+        </div>
+        <p class="doux" id="plan-message"></p>
+      </div>
+      <div class="bloc" id="bloc-resultat" hidden>
+        <h2>Repas</h2><ul class="liste" id="liste-repas"></ul>
+      </div>
+      <div class="bloc" id="bloc-courses" hidden>
+        <h2>Liste de courses</h2><ul class="liste courses" id="liste-courses"></ul>
+        <button class="secondaire" id="btn-copier">Copier la liste</button>
+      </div>
+    </section>
+
+    <!-- PAGE 2 : ma collection (stockée dans ton navigateur) -->
+    <section class="page" id="page-collection">
+      <div class="bloc">
+        <h2>Ajouter une recette</h2>
+        <div class="formulaire">
+          <label>Nom <input id="nouv-nom"></label>
+          <label>Saison <select id="nouv-saison">
+            <option value="ete">Été</option><option value="hiver">Hiver</option><option value="toutes">Toutes</option></select></label>
+          <label>Régime <select id="nouv-regime"></select></label>
+        </div>
+        <label style="margin-top:.75rem">Ingrédients (séparés par des virgules)
+          <textarea id="nouv-ingredients" rows="2"></textarea></label>
+        <button id="btn-ajouter" style="margin-top:.75rem">Ajouter</button>
+      </div>
+      <div class="bloc">
+        <h2>Mes recettes (<span id="nb-collection">0</span>)</h2>
+        <ul class="liste" id="liste-collection"></ul>
+      </div>
+      <div class="bloc">
+        <h2>Sauvegarde</h2>
+        <p class="doux">Tes données sont enregistrées dans ce navigateur. Exporte-les pour les garder ou les transférer.</p>
+        <button class="secondaire" id="btn-export">Exporter (.json)</button>
+        <label style="display:inline-flex;margin-left:.5rem">Importer <input type="file" id="fichier-import" accept=".json"></label>
+      </div>
+    </section>
+
+    <!-- PAGE 3 : suggestions -->
+    <section class="page" id="page-suggestions">
+      <div class="bloc">
+        <h2>Suggestions de menus</h2>
+        <div class="formulaire">
+          <label>Saison <select id="sugg-saison">
+            <option value="toutes">Toutes</option><option value="ete">Été</option><option value="hiver">Hiver</option></select></label>
+          <label>Régime <select id="sugg-regime"></select></label>
+        </div>
+      </div>
+      <div class="grille" id="grille-suggestions"></div>
+    </section>
+
+    <!-- PAGE : connexion / inscription -->
+    <section class="page" id="page-connexion">
+      <div class="bloc petit">
+        <h2>Connexion</h2>
+        <label>Identifiant <input id="login-id" autocomplete="username"></label>
+        <label style="margin-top:.75rem">Mot de passe <input id="login-mdp" type="password" autocomplete="current-password"></label>
+        <p class="message" id="login-message"></p>
+        <button id="btn-connexion">Se connecter</button>
+        <button class="secondaire" id="btn-inscription">Créer un compte</button>
+      </div>
+    </section>
+
+    <!-- PAGE : mon compte (changer le mot de passe) -->
+    <section class="page" id="page-compte">
+      <div class="bloc petit">
+        <h2>Changer mon mot de passe</h2>
+        <label>Mot de passe actuel <input id="mdp-actuel" type="password" autocomplete="current-password"></label>
+        <label style="margin-top:.75rem">Nouveau mot de passe <input id="mdp-nouveau" type="password" autocomplete="new-password"></label>
+        <p class="message" id="compte-message"></p>
+        <button id="btn-changer-mdp">Enregistrer</button>
+      </div>
+    </section>
+
+    <!-- PAGE : administration (réservée à l'admin) -->
+    <section class="page" id="page-admin">
+      <div class="bloc">
+        <h2>Utilisateurs</h2>
+        <p class="message" id="admin-message"></p>
+        <ul class="liste" id="liste-utilisateurs"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
