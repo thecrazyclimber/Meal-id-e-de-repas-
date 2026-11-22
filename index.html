@@ -47,17 +47,18 @@
 
     <!-- PAGE 2 : ma collection (stockée dans ton navigateur) -->
     <section class="page" id="page-collection">
-      <div class="bloc">
-        <h2>Ajouter une recette</h2>
+      <div class="bloc" id="bloc-formulaire">
+        <h2 id="titre-formulaire">Ajouter une recette</h2>
         <div class="formulaire">
           <label>Nom <input id="nouv-nom"></label>
           <label>Saison <select id="nouv-saison">
             <option value="ete">Été</option><option value="hiver">Hiver</option><option value="toutes">Toutes</option></select></label>
-          <label>Régime <select id="nouv-regime"></select></label>
+          <fieldset class="tags"><legend>Régimes</legend><div id="nouv-tags"></div></fieldset>
         </div>
         <label style="margin-top:.75rem">Ingrédients (séparés par des virgules)
           <textarea id="nouv-ingredients" rows="2"></textarea></label>
         <button id="btn-ajouter" style="margin-top:.75rem">Ajouter</button>
+        <button class="secondaire" id="btn-annuler-edition" style="margin-top:.75rem" hidden>Annuler</button>
       </div>
       <div class="bloc">
         <h2>Mes recettes (<span id="nb-collection">0</span>)</h2>
@@ -65,9 +66,9 @@
       </div>
       <div class="bloc">
         <h2>Sauvegarde</h2>
-        <p class="doux">Tes données sont enregistrées dans ce navigateur. Exporte-les pour les garder ou les transférer.</p>
+        <p class="doux">Tes données sont enregistrées dans ton compte. Exporte-les pour les garder ou les transférer.</p>
         <button class="secondaire" id="btn-export">Exporter (.json)</button>
-        <label style="display:inline-flex;margin-left:.5rem">Importer <input type="file" id="fichier-import" accept=".json"></label>
+        <label class="import">Importer <input type="file" id="fichier-import" accept=".json"></label>
       </div>
     </section>
 

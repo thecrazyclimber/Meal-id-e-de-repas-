@@ -113,26 +113,57 @@ function afficherCollection() {
   $("#nb-collection").textContent = collection.length;
   $("#liste-collection").innerHTML = collection.map(r =>
     `<li><div><strong>${esc(r.nom)}</strong>${etiquettes(r)}<span class="doux">${esc(r.ingredients.join(", "))}</span></div>
-     <button class="danger" data-suppr="${esc(r.id)}">Supprimer</button></li>`).join("")
+     <div class="actions"><button class="secondaire" data-modif="${esc(r.id)}">Modifier</button>
+     <button class="danger" data-suppr="${esc(r.id)}">Supprimer</button></div></li>`).join("")
     || '<li class="vide">Ta collection est vide. Ajoute une recette ou pioche dans les suggestions.</li>';
 }
 async function ajouterRecette(r) {
   const res = await db.from("recettes").insert(versLigne(r)).select().single();
-  if (echec(res)) return;
+  if (echec(res)) return false;
   collection.push(res.data); collection.sort((a, b) => a.nom.localeCompare(b.nom));
   afficherCollection(); afficherSuggestions();
+  return true;
 }
 $("#liste-collection").addEventListener("click", async e => {
+  if (e.target.dataset.modif) return commencerEdition(e.target.dataset.modif);
   const id = e.target.dataset.suppr; if (!id) return;
   if (echec(await db.from("recettes").delete().eq("id", id))) return;
   collection = collection.filter(r => r.id !== id); afficherCollection(); afficherSuggestions();
 });
+/* --- Formulaire d'ajout / de modification --- */
+const TAGS_FORM = ["omnivore", "vegetarien", "vegan", "sans gluten"];
+let enEdition = null;   // id de la recette en cours de modification (null = ajout)
+const construireTags = () => $("#nouv-tags").innerHTML = TAGS_FORM.map(t => `<label><input type="checkbox" value="${t}">${t}</label>`).join("");
+function lireFormulaire() {
+  const tags = [...document.querySelectorAll("#nouv-tags input:checked")].map(i => i.value);
+  if (tags.includes("vegan") && !tags.includes("vegetarien")) tags.push("vegetarien");   // vegan implique végétarien
+  return { nom: $("#nouv-nom").value.trim(), saison: $("#nouv-saison").value, tags,
+           ingredients: $("#nouv-ingredients").value.split(",").map(s => s.trim()).filter(Boolean) };
+}
+function remplirFormulaire(r) {
+  $("#nouv-nom").value = r ? r.nom : ""; $("#nouv-saison").value = r ? r.saison : "ete";
+  $("#nouv-ingredients").value = r ? r.ingredients.join(", ") : "";
+  document.querySelectorAll("#nouv-tags input").forEach(i => i.checked = !!r && r.tags.includes(i.value));
+  $("#titre-formulaire").textContent = r ? "Modifier la recette" : "Ajouter une recette";
+  $("#btn-ajouter").textContent = r ? "Enregistrer les modifications" : "Ajouter";
+  $("#btn-annuler-edition").hidden = !r;
+}
+function commencerEdition(id) {
+  const r = collection.find(c => c.id === id); if (!r) return;
+  enEdition = id; remplirFormulaire(r);
+  $("#bloc-formulaire").scrollIntoView({ behavior: "smooth" }); $("#nouv-nom").focus();
+}
+function finirEdition() { enEdition = null; remplirFormulaire(null); }
+$("#btn-annuler-edition").addEventListener("click", finirEdition);
 $("#btn-ajouter").addEventListener("click", async () => {
-  const nom = $("#nouv-nom").value.trim(); if (!nom) return $("#nouv-nom").focus();
-  const regime = $("#nouv-regime").value;
-  await ajouterRecette({ nom, saison: $("#nouv-saison").value, tags: regime === "tous" ? [] : regime === "vegan" ? ["vegan", "vegetarien"] : [regime],
-    ingredients: $("#nouv-ingredients").value.split(",").map(s => s.trim()).filter(Boolean) });
-  $("#nouv-nom").value = $("#nouv-ingredients").value = "";
+  const f = lireFormulaire(); if (!f.nom) return $("#nouv-nom").focus();
+  if (enEdition) {
+    const res = await db.from("recettes").update(f).eq("id", enEdition).select().single();
+    if (echec(res)) return;
+    collection = collection.map(r => r.id === enEdition ? res.data : r).sort((a, b) => a.nom.localeCompare(b.nom));
+    afficherCollection(); afficherSuggestions();
+  } else if (!(await ajouterRecette(f))) return;
+  finirEdition();
 });
 $("#btn-export").addEventListener("click", () => {
   const a = document.createElement("a");
@@ -177,5 +208,6 @@ $("#liste-utilisateurs").addEventListener("click", async e => {
 });
 
 /* ===== Démarrage ===== */
-["#plan-regime", "#nouv-regime", "#sugg-regime"].forEach(s => $(s).innerHTML = REGIMES.map(r => `<option value="${r}">${r[0].toUpperCase() + r.slice(1)}</option>`).join(""));
+["#plan-regime", "#sugg-regime"].forEach(s => $(s).innerHTML = REGIMES.map(r => `<option value="${r}">${r[0].toUpperCase() + r.slice(1)}</option>`).join(""));
+construireTags();
 demarrer();
