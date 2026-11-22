@@ -19,7 +19,12 @@ function melanger(t) { t = [...t]; for (let i = t.length - 1; i > 0; i--) { cons
 
 /* ===== Chargement des données de l'utilisateur ===== */
 async function charger() {
-  const { data: profil } = await db.from("profiles").select("*").single();
+  const { data: profil, error } = await db.from("profiles").select("*").maybeSingle();
+  if (error || !profil) {   // profil absent ou illisible : on déconnecte et on explique
+    await db.auth.signOut();
+    dire("#login-message", error ? "Erreur Supabase : " + error.message : "Profil introuvable pour ce compte (voir l'étape de réparation SQL).");
+    return;
+  }
   moi = profil;
   if (moi.identifiant === "caroline" && !moi.seed_done) {   // première connexion de Caroline : on importe ses recettes d'origine
     if (echec(await db.from("recettes").insert(RECETTES_DE_BASE.map(versLigne)))) return;
