@@ -35,6 +35,13 @@ create policy "menu perso" on public.dernier_menu for all using (user_id = auth.
 revoke update on public.profiles from anon, authenticated;
 grant update (seed_done) on public.profiles to authenticated;
 
+-- Droits d'accès aux tables (nécessaires sur les projets récents, où Supabase n'en donne plus automatiquement).
+-- Les règles RLS ci-dessus restent le vrai filtre : chacun n'accède qu'à ses propres lignes.
+grant usage on schema public to anon, authenticated;
+grant select on public.profiles to authenticated;
+grant select, insert, update, delete on public.recettes to authenticated;
+grant select, insert, update, delete on public.dernier_menu to authenticated;
+
 -- Création automatique du profil à l'inscription (identifiant = partie avant le @)
 create function public.handle_new_user() returns trigger
 language plpgsql security definer set search_path = public as $$
